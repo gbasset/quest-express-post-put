@@ -13,12 +13,19 @@ app.get('/api/users', (req, res) => {
   // send an SQL query to get all users
   connection.query('SELECT * FROM user', (err, results) => {
     if (err) {
-      // If an error has occurred, then the client is informed of the error
-      res.status(500).json({
+      // MySQL reports a duplicate entry -> 409 Conflict
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(409).json({
+          error: 'Email already exists'
+        });
+      }
+      // Other error codes -> 500
+      return res.status(500).json({
         error: err.message,
         sql: err.sql,
       });
-    } else {
+    }
+    else {
       // If everything went well, we send the result of the SQL query as JSON
       res.json(results);
     }
