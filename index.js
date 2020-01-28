@@ -35,8 +35,17 @@ app.post('/api/users', (req, res) => {
         sql: err.sql,
       });
     } else {
-      // If everything went well, we send the result of the SQL query as JSON
-      res.json(results);
+      connection.query(`SELECT * FROM user where id=${results.insertId}`, (err, results) => {
+        if (err) {
+          // If an error has occurred, then the client is informed of the error
+          res.status(500).json({
+            error: err.message,
+            sql: err.sql,
+          });
+        } else {
+          res.status(201).json(results)
+        }
+      })
     }
   });
 });
