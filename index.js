@@ -26,6 +26,8 @@ app.get('/api/users', (req, res) => {
   });
 });
 
+
+
 const userValidationMiddlewares = [
   // email must be valid
   check('email').isEmail(),
@@ -114,6 +116,23 @@ userValidationMiddlewares,
       });
           
 
+
+=======
+app.post('/api/users', (req, res) => {
+  const formData = req.body
+  connection.query(`INSERT INTO user SET ?`, formData, (err, results) => {
+    if (err) {
+      // If an error has occurred, then the client is informed of the error
+      res.status(500).json({
+        error: err.message,
+        sql: err.sql,
+      });
+    } else {
+      // If everything went well, we send the result of the SQL query as JSON
+      res.json(results);
+    }
+  });
+});
 
 app.listen(process.env.PORT, (err) => {
   if (err) {
