@@ -78,6 +78,43 @@ app.post(
   },
 );
 
+
+
+
+app.put ('/api/users/:id',
+userValidationMiddlewares,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    // send an SQL query to get all users
+    return connection.query(`UPDATE user SET ? WHERE id=${req.params.id}`, req.body, (err, results) => {
+      if (err) {console.log(err)
+        // If an error has occurred, then the client is informed of the error
+        return res.status(500).json({
+          error: err.message,
+          sql: err.sql,
+        });
+        }
+        else {
+          return connection.query(`SELECT email, id, name FROM user where id=${req.params.id}`, (err, results) => {
+            if (err) {console.log(err)
+              // If an error has occurred, then the client is informed of the error
+              res.status(500).json({
+                error: err.message,
+                sql: err.sql,
+              });
+            } else {console.log(results)
+              res.status(200).json(results)
+            }
+          })
+        }}
+    )
+      });
+          
+
+
 app.listen(process.env.PORT, (err) => {
   if (err) {
     throw new Error('Something bad happened...');
