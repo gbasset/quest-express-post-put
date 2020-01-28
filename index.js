@@ -117,7 +117,6 @@ userValidationMiddlewares,
           
 
 
-=======
 app.post('/api/users', (req, res) => {
   const formData = req.body
   connection.query(`INSERT INTO user SET ?`, formData, (err, results) => {
